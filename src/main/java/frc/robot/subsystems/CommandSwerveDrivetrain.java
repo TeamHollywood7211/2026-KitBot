@@ -1,10 +1,8 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
-
 import java.util.Optional;
 import java.util.function.Supplier;
-
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -14,8 +12,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -26,10 +24,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
@@ -37,17 +34,22 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
 
+    private final PIDController headingPID = new PIDController(0.05, 0, 0);
+
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, modules);
+        headingPID.setTolerance(1.0);
         if (Utils.isSimulation()) startSimThread();
     }
 
-    public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants, double odometryUpdateFrequency, SwerveModuleConstants<?, ?, ?>... modules) {
-        super(drivetrainConstants, odometryUpdateFrequency, modules);
-        if (Utils.isSimulation()) startSimThread();
+    public double getAutoHeadingRate() {
+        double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+        double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
+        
+        if (tv < 1) return 0;
+        return headingPID.calculate(tx, 0);
     }
 
-    /** PathPlanner Configuration */
     public void configurePathPlanner() {
         try {
             RobotConfig config = RobotConfig.fromGUISettings();
@@ -70,7 +72,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
-        // Use getter to access private kinematics per CTRE Manual
         return getKinematics().toChassisSpeeds(getState().ModuleStates);
     }
 
@@ -86,14 +87,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         if (poseArray.length > 0 && NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0) == 1) {
             Pose2d visionPose = new Pose2d(poseArray[0], poseArray[1], Rotation2d.fromDegrees(poseArray[5]));
-            // MegaTag 2 Latency correction
             addVisionMeasurement(visionPose, Utils.fpgaToCurrentTime(Utils.getCurrentTimeSeconds() - (poseArray[6] / 1000.0)));
+            SmartDashboard.putBoolean("Drivetrain/Vision Lock", true);
+        } else {
+            SmartDashboard.putBoolean("Drivetrain/Vision Lock", false);
         }
     }
 
     @Override
     public void periodic() {
         updatePoseWithLimelight();
+        
+        ChassisSpeeds currentSpeeds = getRobotRelativeSpeeds();
+        double linearVelocity = Math.sqrt(Math.pow(currentSpeeds.vxMetersPerSecond, 2) + Math.pow(currentSpeeds.vyMetersPerSecond, 2));
+
+        SmartDashboard.putNumber("Drivetrain/Battery Voltage", RobotController.getBatteryVoltage());
+        SmartDashboard.putNumber("Drivetrain/Speed mps", linearVelocity);
+        SmartDashboard.putNumber("Drivetrain/Heading Degrees", getState().Pose.getRotation().getDegrees());
     }
 
     public Command applyRequest(Supplier<SwerveRequest> request) {
