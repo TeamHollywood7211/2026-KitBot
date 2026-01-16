@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkBase.PersistMode;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -21,7 +23,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public ShooterSubsystem() {
         SparkMaxConfig shooterConfig = new SparkMaxConfig();
         shooterConfig.smartCurrentLimit(60);
-        shooterMotor.configure(shooterConfig, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
+        shooterMotor.configure(shooterConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         rpmMap.put(1.0, 2500.0);
         rpmMap.put(2.0, 3100.0);
