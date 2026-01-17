@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5342000000000002,
-        "y": 4.028530670470756
+        "x": 0.5231666666712713,
+        "y": 0.6536777777785949
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.5341999999999985,
-        "y": 4.028530670470756
+        "x": 1.5231666666712713,
+        "y": 0.6536777777785954
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "human player"
     },
     {
       "anchor": {
-        "x": 2.6084777777777775,
-        "y": 4.028530670470756
+        "x": 2.579244444444445,
+        "y": 3.7134333333333327
       },
       "prevControl": {
-        "x": 1.6084777777777775,
-        "y": 4.028530670470756
+        "x": 1.579244444444445,
+        "y": 3.7134333333333327
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "goal shot"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],

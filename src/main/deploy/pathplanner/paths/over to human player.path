@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5342000000000002,
-        "y": 4.028530670470756
+        "x": 4.645066666666667,
+        "y": 2.768222222222222
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.5341999999999985,
-        "y": 4.028530670470756
+        "x": 5.645066666666667,
+        "y": 2.7682222222222226
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "by tower"
     },
     {
       "anchor": {
-        "x": 2.6084777777777775,
-        "y": 4.028530670470756
+        "x": 1.5560777777777783,
+        "y": 2.2809999999999993
       },
       "prevControl": {
-        "x": 1.6084777777777775,
-        "y": 4.028530670470756
+        "x": 0.5560777777777783,
+        "y": 2.2809999999999993
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "goal shot"
+      "linkedName": "over to human player"
     }
   ],
   "rotationTargets": [],

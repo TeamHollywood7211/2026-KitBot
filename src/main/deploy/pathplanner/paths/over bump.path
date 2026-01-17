@@ -3,32 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5342000000000002,
-        "y": 4.028530670470756
+        "x": 2.9203,
+        "y": 5.438199999999999
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.5341999999999985,
-        "y": 4.028530670470756
+        "x": 3.920300000000001,
+        "y": 5.438199999999999
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "line to bump"
     },
     {
       "anchor": {
-        "x": 2.6084777777777775,
-        "y": 4.028530670470756
+        "x": 6.233411111111111,
+        "y": 5.438199999999999
       },
       "prevControl": {
-        "x": 1.6084777777777775,
-        "y": 4.028530670470756
+        "x": 5.520466639652979,
+        "y": 5.438199999999999
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "goal shot"
+      "linkedName": "over bump"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.0,
+      "rotationDegrees": 45.0
+    },
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 45.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -41,13 +50,13 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 0.0,
     "rotation": 0.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 0.0,
     "rotation": 0.0
   },
   "useDefaultConstraints": true
