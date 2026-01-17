@@ -95,6 +95,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
     }
 
+    public void setLimelightLED(boolean on) {
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(on ? 3 : 1);
+    }
+
     @Override
     public void periodic() {
         updatePoseWithLimelight();

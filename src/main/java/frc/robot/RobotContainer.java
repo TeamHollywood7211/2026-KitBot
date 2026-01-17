@@ -69,7 +69,14 @@ public class RobotContainer {
             () -> shooter.setOuttakeMode(0.4)).finallyDo(shooter::stopAll)
         );
 
-        joystick.rightTrigger().whileTrue(new ShootCommand(drivetrain, shooter, () -> joystick.rightBumper().getAsBoolean()));
+        joystick.rightTrigger().whileTrue(
+            drivetrain.runOnce(() -> drivetrain.setLimelightLED(true))
+            .andThen(new ShootCommand(drivetrain, shooter, () -> joystick.rightBumper().getAsBoolean()))
+            .finallyDo(() -> drivetrain.setLimelightLED(false))
+        );
+
+        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.setLimelightLED(true)))
+                        .onFalse(drivetrain.runOnce(() -> drivetrain.setLimelightLED(false)));
         
         joystick.back().and(joystick.leftBumper()).onTrue(drivetrain.runOnce(drivetrain::resetPoseToLimelight));
         joystick.leftBumper().and(joystick.back().negate()).onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
