@@ -58,8 +58,8 @@ public class RobotContainer {
     private void configureBindings() {
         drivetrain.setDefaultCommand(
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(xLimiter.calculate(-joystick.getLeftY()) * MaxSpeed * TrainingWheels) 
-                    .withVelocityY(yLimiter.calculate(-joystick.getLeftX()) * MaxSpeed * TrainingWheels) 
+                drive.withVelocityX(xLimiter.calculate(joystick.getLeftY()) * MaxSpeed * TrainingWheels) 
+                    .withVelocityY(yLimiter.calculate(joystick.getLeftX()) * MaxSpeed * TrainingWheels)
                     .withRotationalRate(
                         joystick.rightTrigger().getAsBoolean() 
                         ? drivetrain.getAutoHeadingRate() 
