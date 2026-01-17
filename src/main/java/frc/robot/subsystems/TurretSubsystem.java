@@ -4,19 +4,17 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class TurretSubsystem extends SubsystemBase {
     private final SparkMax turretMotor = new SparkMax(10, MotorType.kBrushless);
 
-    @SuppressWarnings("removal")
+    @SuppressWarnings("removal") // Clears the 2026 Beta API warnings
     public TurretSubsystem() {
         SparkMaxConfig config = new SparkMaxConfig();
         config.smartCurrentLimit(20);
-        turretMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        turretMotor.configure(config, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
     }
 
     public boolean isAligned() {

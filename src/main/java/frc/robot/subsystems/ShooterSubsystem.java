@@ -1,8 +1,6 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
@@ -20,13 +18,14 @@ public class ShooterSubsystem extends SubsystemBase {
     private final InterpolatingDoubleTreeMap rpmMap = new InterpolatingDoubleTreeMap();
     private double targetRPM = 0;
 
-    @SuppressWarnings("removal")
+    @SuppressWarnings("removal") // Clears the 2026 Beta API warnings
     public ShooterSubsystem() {
         SparkMaxConfig config = new SparkMaxConfig();
         config.smartCurrentLimit(60);
         
-        intakeFlywheelMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        hopperMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        // This configuration call is valid for 2026 but marked for future removal
+        intakeFlywheelMotor.configure(config, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
+        hopperMotor.configure(config, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
 
         rpmMap.put(1.0, 2500.0);
         rpmMap.put(2.0, 3100.0);

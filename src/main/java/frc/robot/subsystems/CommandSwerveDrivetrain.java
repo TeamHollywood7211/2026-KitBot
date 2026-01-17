@@ -35,7 +35,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             AutoBuilder.configure(
                 this::getStatePose,
                 this::resetPose,
-                this::getRobotRelativeSpeeds, // Updated to use the helper method below
+                this::getRobotRelativeSpeeds,
                 (speeds, feedforwards) -> this.setControl(new SwerveRequest.ApplyRobotSpeeds()
                     .withSpeeds(speeds)
                     .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
