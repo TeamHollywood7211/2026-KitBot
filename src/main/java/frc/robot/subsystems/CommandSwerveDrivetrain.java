@@ -8,8 +8,10 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -20,9 +22,20 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
+    // PID controller for turning to a map coordinate
+    private final PIDController mapHeadingPID = new PIDController(4.0, 0, 0);
+
+    // *UPDATE THESE WITH OFFICIAL 2026 FIELD COORDINATES FOR THE HUB*
+    // Currently set to generic center-field values as placeholders
+    private final Translation2d BLUE_HUB = new Translation2d(8.27, 4.10); 
+    private final Translation2d RED_HUB = new Translation2d(8.27, 4.10);
+
     public CommandSwerveDrivetrain(com.ctre.phoenix6.swerve.SwerveDrivetrainConstants driveConstants, com.ctre.phoenix6.swerve.SwerveModuleConstants... modules) {
         super(driveConstants, modules);
         this.setVisionMeasurementStdDevs(VecBuilder.fill(0.1, 0.1, 0.1));
+        
+        // Configure PID to be continuous (0 and 360 degrees are the same)
+        mapHeadingPID.enableContinuousInput(-Math.PI, Math.PI);
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
@@ -99,6 +112,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(on ? 3 : 1);
     }
 
+    public void setLimelightPipeline(int pipelineIndex) {
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(pipelineIndex);
+    }
+
     @Override
     public void periodic() {
         updatePoseWithLimelight();
@@ -110,13 +127,34 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public boolean isAligned() {
         double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
+        // If we see the target, use tx. If not, assume unaligned.
         return tv == 1 && Math.abs(tx) < 1.5;
     }
     
+    /**
+     * Hybrid Aiming:
+     * 1. If TV=1 (Target Visible): Use Limelight 'tx' for precision.
+     * 2. If TV=0 (Blind): Use Odometry to turn towards the Alliance HUB.
+     */
     public double getAutoHeadingRate() {
         double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
-        if (tv < 1) return 0;
-        return tx * 0.05; 
+
+        if (tv == 1) {
+            // Precision Mode: P-controller on Limelight offset
+            return tx * 0.05; 
+        } else {
+            // Rough Align Mode: Calculate angle to Hub using Odometry
+            Translation2d targetLocation = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) 
+                == DriverStation.Alliance.Blue ? BLUE_HUB : RED_HUB;
+            
+            double targetAngleRadians = Math.atan2(
+                targetLocation.getY() - getStatePose().getY(),
+                targetLocation.getX() - getStatePose().getX()
+            );
+
+            // Use PID to turn to that map angle
+            return mapHeadingPID.calculate(getStatePose().getRotation().getRadians(), targetAngleRadians);
+        }
     }
 }
