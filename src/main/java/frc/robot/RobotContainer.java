@@ -37,7 +37,18 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-        NamedCommands.registerCommand("ShootHopper", new ShootSequence(drivetrain, shooter));
+        NamedCommands.registerCommand("Shoot", new ShootSequence(drivetrain, shooter));
+        
+        NamedCommands.registerCommand("StartIntake", shooter.runOnce(() -> shooter.setIntakeMode(0.6)));
+        
+        NamedCommands.registerCommand("StopShooter", shooter.runOnce(() -> shooter.stopAll()));
+
+        NamedCommands.registerCommand("Intake3Seconds", shooter.run(() -> shooter.setIntakeMode(0.6)).withTimeout(3.0));
+
+        NamedCommands.registerCommand("Outtake", shooter.run(
+            () -> shooter.setOuttakeMode(0.4)).finallyDo(shooter::stopAll)
+        );
+
         drivetrain.configurePathPlanner();
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);

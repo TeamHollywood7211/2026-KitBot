@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "human player"
+            "pathName": "Start 2 Human"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "leaving human player"
+            "pathName": "Human to Shoot"
           }
         }
       ]

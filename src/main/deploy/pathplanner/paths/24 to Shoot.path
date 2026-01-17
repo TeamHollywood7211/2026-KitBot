@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5342000000000002,
-        "y": 4.028530670470756
+        "x": 0.6400999999999999,
+        "y": 5.983888888888889
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.5341999999999985,
-        "y": 4.028530670470756
+        "x": 1.6401,
+        "y": 5.983888888888889
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "bALL POINT"
     },
     {
       "anchor": {
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -178.91907581333922
   },
   "useDefaultConstraints": true
 }

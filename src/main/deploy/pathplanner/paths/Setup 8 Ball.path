@@ -3,37 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5560777777777783,
-        "y": 5.389477777777777
+        "x": 3.5342000000000002,
+        "y": 4.028530670470756
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5560777777777783,
-        "y": 5.389477777777777
+        "x": 3.7842000000000002,
+        "y": 4.028530670470756
       },
       "isLocked": false,
-      "linkedName": "bALL POINT"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.9203,
-        "y": 5.438199999999999
+        "x": 2.6084777777777775,
+        "y": 4.028530670470756
       },
       "prevControl": {
-        "x": 2.3746111111111103,
-        "y": 5.4479444444444445
+        "x": 2.3584777777777775,
+        "y": 4.028530670470756
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "line to bump"
+      "linkedName": "goal shot"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": 45.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
