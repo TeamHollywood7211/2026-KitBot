@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterSubsystem extends SubsystemBase {
-    private final TalonFX intakeFlywheelMotor = new TalonFX(42, "mechanisms");
-    private final TalonFX hopperMotor = new TalonFX(43, "mechanisms");
+    private final TalonFX intakeFlywheelMotor = new TalonFX(42);
+    private final TalonFX hopperMotor = new TalonFX(43);
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
     private final CANrange hopperSensor = new CANrange(47);
     // private final CANrange frontSensor = new CANrange(48);
@@ -30,7 +30,7 @@ public class ShooterSubsystem extends SubsystemBase {
         intakeConfigs.Slot0.kS = 0.25; 
 
         hopperConfigs.Slot0.kV = 0.12; 
-        hopperConfigs.Slot0.kP = 0.15; 
+        hopperConfigs.Slot0.kP = 0.11; 
 
         intakeFlywheelMotor.getConfigurator().apply(intakeConfigs);
         hopperMotor.getConfigurator().apply(hopperConfigs);
@@ -77,6 +77,11 @@ public class ShooterSubsystem extends SubsystemBase {
         hopperMotor.set(-percent);
     }
 
+    public void setLaunchMode(double percent) {
+        intakeFlywheelMotor.set(percent);
+        hopperMotor.set(-percent);
+    }
+
     // --- Velocity Control Methods ---
 
     public void setLaunchVelocity(double rpm) {
@@ -88,7 +93,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public void runHopper(double speed) {
         // If speed is a small percent (0.0 to 1.0), use .set()
         // If speed is RPM, use setControl with rps conversion
-        hopperMotor.set(speed);
+        hopperMotor.set(3500);
     }
 
     public boolean isAtVelocity() {

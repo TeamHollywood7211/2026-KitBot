@@ -47,12 +47,12 @@ public class ShootCommand extends Command {
         }
 
         double dynamicRPM = shooter.getRPMForDistance(distance);
-        shooter.setLaunchVelocity(dynamicRPM);
+        shooter.setLaunchVelocity(3000);
 
         // Only shoot if aligned AND (Vision sees target OR Override is held)
         boolean canShoot = (drivetrain.isAligned() || override.getAsBoolean()) && shooter.isAtVelocity();
 
-        if (canShoot && !shooter.isHopperEmpty()) {
+        if (true) {
             shooter.runHopper(-1.0);
         } else {
             shooter.runHopper(0.0);

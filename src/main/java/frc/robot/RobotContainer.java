@@ -31,6 +31,8 @@ public class RobotContainer {
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
+    private final CommandXboxController joystick2 = new CommandXboxController(1);
+
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final ShooterSubsystem shooter = new ShooterSubsystem();
 
@@ -72,28 +74,31 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> new SwerveRequest.Idle()).ignoringDisable(true)
         );
 
-        joystick.leftTrigger().whileTrue(shooter.run(
+        joystick2.leftTrigger().whileTrue(shooter.run(
             () -> shooter.setIntakeMode(0.6)).finallyDo(shooter::stopAll)
         );
 
-        joystick.x().whileTrue(shooter.run(
+        joystick2.x().whileTrue(shooter.run(
             () -> shooter.setOuttakeMode(0.4)).finallyDo(shooter::stopAll)
         );
 
-        joystick.rightTrigger().whileTrue(
-            drivetrain.runOnce(() -> drivetrain.setLimelightLED(true))
-            .andThen(new ShootCommand(drivetrain, shooter, () -> joystick.rightBumper().getAsBoolean()))
-            .finallyDo(() -> drivetrain.setLimelightLED(false))
+        joystick2.rightTrigger().whileTrue(shooter.run(
+            // drivetrain.runOnce(() -> drivetrain.setLimelightLED(true))
+            // .andThen(new ShootCommand(drivetrain, shooter, () -> joystick2.rightBumper().getAsBoolean()))
+            // .finallyDo(() -> drivetrain.setLimelightLED(false))
+            () -> shooter.setLaunchMode(0.5)).finallyDo(shooter::stopAll)
         );
 
-        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.setLimelightLED(true)))
+        joystick2.start().onTrue(drivetrain.runOnce(() -> drivetrain.setLimelightLED(true)))
                         .onFalse(drivetrain.runOnce(() -> drivetrain.setLimelightLED(false)));
         
-        joystick.back().and(joystick.leftBumper()).onTrue(drivetrain.runOnce(drivetrain::resetPoseToLimelight));
-        joystick.leftBumper().and(joystick.back().negate()).onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        joystick2.back().and(joystick2.leftBumper()).onTrue(drivetrain.runOnce(drivetrain::resetPoseToLimelight));
+        joystick2.leftBumper().and(joystick2.back().negate()).onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+
     }
 
     public Command getAutonomousCommand() {
+
         return autoChooser.getSelected();
     }
 }
