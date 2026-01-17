@@ -1,0 +1,29 @@
+{
+  "tabs": [
+    {
+      "name": "Match Play",
+      "layout": [
+        {
+          "type": "Camera Stream",
+          "title": "Limelight Feed",
+          "properties": { "url": "http://10.XX.XX.11:5800/stream.mjpg" }
+        },
+        {
+          "type": "Graph",
+          "title": "Shooter RPM",
+          "properties": { "source": "SmartDashboard/Shooter/Actual RPM", "min": 0, "max": 5000 }
+        },
+        {
+          "type": "Boolean Box",
+          "title": "Aligned to Target",
+          "properties": { "source": "SmartDashboard/Drivetrain/Aligned to Target", "color": "#00FF00" }
+        },
+        {
+          "type": "Text View",
+          "title": "Battery Voltage",
+          "properties": { "source": "SmartDashboard/Drivetrain/Battery Voltage" }
+        }
+      ]
+    }
+  ]
+}

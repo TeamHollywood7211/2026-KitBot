@@ -1,34 +1,37 @@
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.TurretSubsystem;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class ShootCommand extends Command {
-    private final TurretSubsystem turret;
+    private final CommandSwerveDrivetrain drivetrain;
     private final ShooterSubsystem shooter;
+    private final BooleanSupplier override;
 
-    public ShootCommand(TurretSubsystem turret, ShooterSubsystem shooter) {
-        this.turret = turret;
+    public ShootCommand(CommandSwerveDrivetrain drivetrain, ShooterSubsystem shooter, BooleanSupplier override) {
+        this.drivetrain = drivetrain;
         this.shooter = shooter;
-        addRequirements(turret, shooter);
+        this.override = override;
+        addRequirements(shooter);
     }
 
     @Override
     public void execute() {
-        turret.alignToTarget();
-
         double ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
         double distance = calculateDistance(ty);
         double dynamicRPM = shooter.getRPMForDistance(distance);
 
-        shooter.setShooterVelocity(dynamicRPM);
+        shooter.setLaunchVelocity(dynamicRPM);
 
-        if (turret.isAligned() && shooter.isAtVelocity() && !shooter.isHopperEmpty()) {
-            shooter.runFeeder(1.0);
+        boolean canShoot = (drivetrain.isAligned() || override.getAsBoolean()) && shooter.isAtVelocity();
+
+        if (canShoot && !shooter.isHopperEmpty()) {
+            shooter.runHopper(-1.0);
         } else {
-            shooter.runFeeder(0.0);
+            shooter.runHopper(0.0);
         }
     }
 
@@ -48,6 +51,5 @@ public class ShootCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         shooter.stopAll();
-        turret.stopTurret();
     }
 }
