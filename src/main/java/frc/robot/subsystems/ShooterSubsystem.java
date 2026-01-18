@@ -5,42 +5,63 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+// Add Utils for Simulation Check
+import com.ctre.phoenix6.Utils; 
+
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.Elastic;
+import frc.robot.util.Elastic.NotificationLevel;
 
 public class ShooterSubsystem extends SubsystemBase {
+    // Hardware
     private final TalonFX intakeFlywheelMotor = new TalonFX(42);
     private final TalonFX hopperMotor = new TalonFX(43);
+    
+    // Sensors
+    private final CANrange hopperSensor = new CANrange(47); 
+    private final CANrange frontSensor = new CANrange(48);  
+    
+    // Logic
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
-    private final CANrange hopperSensor = new CANrange(47);
-    // private final CANrange frontSensor = new CANrange(48);
-    private final Debouncer emptyDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
+    private final Debouncer jamDebouncer = new Debouncer(0.5, Debouncer.DebounceType.kRising);
     private final InterpolatingDoubleTreeMap rpmMap = new InterpolatingDoubleTreeMap();
+    
     private double targetRPM = 0;
+    private double manualRPM = 3500; 
+    
+    // --- NOTIFICATION STATE ---
+    private boolean wasJammed = false;
 
     public ShooterSubsystem() {
+        // --- MOTOR CONFIG ---
         TalonFXConfiguration intakeConfigs = new TalonFXConfiguration();
         TalonFXConfiguration hopperConfigs = new TalonFXConfiguration();
 
         intakeConfigs.Slot0.kV = 0.12; 
         intakeConfigs.Slot0.kP = 0.11; 
         intakeConfigs.Slot0.kS = 0.25; 
+        intakeConfigs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
         hopperConfigs.Slot0.kV = 0.12; 
-        hopperConfigs.Slot0.kP = 0.11; 
+        hopperConfigs.Slot0.kP = 0.11;
+        hopperConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake; 
 
         intakeFlywheelMotor.getConfigurator().apply(intakeConfigs);
         hopperMotor.getConfigurator().apply(hopperConfigs);
         
+        // --- SENSOR CONFIG ---
         CANrangeConfiguration rangeConfigs = new CANrangeConfiguration();
-        // Set threshold: detects if object is within 0.15 meters (15cm)
         rangeConfigs.ProximityParams.ProximityThreshold = 0.15; 
+        
         hopperSensor.getConfigurator().apply(rangeConfigs);
+        frontSensor.getConfigurator().apply(rangeConfigs);
        
-        // Map setup
+        // --- DISTANCE MAP ---
         rpmMap.put(1.0, 2500.0);
         rpmMap.put(2.0, 3100.0);
         rpmMap.put(3.0, 3500.0);
@@ -48,18 +69,32 @@ public class ShooterSubsystem extends SubsystemBase {
         rpmMap.put(5.0, 5000.0);
     }
 
-    // --- Added Methods to Resolve Compiler Errors ---
-
     public double getRPMForDistance(double distanceMeters) {
         return rpmMap.get(distanceMeters);
     }
 
-    public boolean isHopperEmpty() {
-        // refresh() updates the signal from the CAN bus
-        boolean isBallPresent = hopperSensor.getIsDetected().refresh().getValue();
-        return emptyDebouncer.calculate(!isBallPresent);
+    // --- SENSOR METHODS ---
+    public boolean isJammed() {
+        boolean rawDetection = hopperSensor.getIsDetected().refresh().getValue();
+        return jamDebouncer.calculate(rawDetection);
     }
 
+    public boolean isHumanLoadDetected() {
+        return frontSensor.getIsDetected().refresh().getValue();
+    }
+
+    public boolean isAtVelocity() {
+        double actualRPM = intakeFlywheelMotor.getVelocity().getValueAsDouble() * 60.0;
+        // In Sim, we might be perfect, so allow a small error
+        return Math.abs(actualRPM - targetRPM) < 100;
+    }
+
+    // --- MANUAL CONTROLS ---
+    public void incrementManualRPM() { manualRPM += 50; }
+    public void decrementManualRPM() { manualRPM -= 50; }
+    public double getManualRPM() { return manualRPM; }
+
+    // --- MOTORS ---
     public void stopAll() {
         intakeFlywheelMotor.stopMotor();
         hopperMotor.stopMotor();
@@ -67,7 +102,6 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void setIntakeMode(double percent) {
-        // Use duty cycle for basic percent-output intake
         intakeFlywheelMotor.set(percent);
         hopperMotor.set(percent);
     }
@@ -77,13 +111,6 @@ public class ShooterSubsystem extends SubsystemBase {
         hopperMotor.set(-percent);
     }
 
-    public void setLaunchMode(double percent) {
-        intakeFlywheelMotor.set(percent);
-        hopperMotor.set(-percent);
-    }
-
-    // --- Velocity Control Methods ---
-
     public void setLaunchVelocity(double rpm) {
         targetRPM = rpm;
         double rps = rpm / 60.0; 
@@ -91,22 +118,49 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void runHopper(double speed) {
-        // If speed is a small percent (0.0 to 1.0), use .set()
-        // If speed is RPM, use setControl with rps conversion
-        hopperMotor.set(3500);
-    }
-
-    public boolean isAtVelocity() {
-        double actualRPM = intakeFlywheelMotor.getVelocity().getValueAsDouble() * 60.0;
-        return Math.abs(actualRPM - targetRPM) < 100;
+        hopperMotor.set(speed);
     }
 
     @Override
     public void periodic() {
+        // --- SIMULATION PHYSICS HACK ---
+        if (Utils.isSimulation()) {
+            double simulatedRPS = targetRPM / 60.0;
+            intakeFlywheelMotor.getSimState().setRotorVelocity(simulatedRPS);
+        }
+        
+        // --- JAM NOTIFICATION LOGIC ---
+        boolean currentlyJammed = isJammed();
+        
+        if (currentlyJammed && !wasJammed) {
+            // RISING EDGE: Just became jammed
+            Elastic.Notification alert = new Elastic.Notification(
+                NotificationLevel.ERROR, 
+                "SHOOTER JAMMED!", 
+                "Hopper blocked for >0.5s. Reverse Intake!"
+            );
+            Elastic.sendNotification(alert);
+            
+        } else if (!currentlyJammed && wasJammed) {
+            // FALLING EDGE: Jam cleared
+            Elastic.Notification clear = new Elastic.Notification(
+                NotificationLevel.INFO, 
+                "Jam Cleared", 
+                "Shooter is ready."
+            );
+            Elastic.sendNotification(clear);
+        }
+        
+        wasJammed = currentlyJammed; // Update state for next loop
+        // ------------------------------
+
         double currentRPM = intakeFlywheelMotor.getVelocity().getValueAsDouble() * 60.0;
+        
         SmartDashboard.putNumber("Shooter/Target RPM", targetRPM);
         SmartDashboard.putNumber("Shooter/Actual RPM", currentRPM);
+        SmartDashboard.putNumber("Shooter/Manual Setpoint", manualRPM);
         SmartDashboard.putBoolean("Shooter/At Velocity", isAtVelocity());
-        SmartDashboard.putBoolean("Shooter/Hopper Empty", isHopperEmpty());
+        SmartDashboard.putBoolean("Shooter/Is Jammed", currentlyJammed);
+        SmartDashboard.putBoolean("Shooter/Human Load Detect", isHumanLoadDetected());
     }
 }
