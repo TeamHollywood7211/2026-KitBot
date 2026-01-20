@@ -111,6 +111,11 @@ public class ShooterSubsystem extends SubsystemBase {
         hopperMotor.set(-percent);
     }
 
+    public void setEjectMode(double percent) {
+        intakeFlywheelMotor.set(percent);
+        hopperMotor.set(-percent);
+    }
+
     public void setLaunchVelocity(double rpm) {
         targetRPM = rpm;
         double rps = rpm / 60.0; 

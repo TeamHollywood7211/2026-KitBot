@@ -162,7 +162,6 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> new SwerveRequest.Idle()).ignoringDisable(true)
         );
         
-        // --- REST OF YOUR BINDINGS STAY THE SAME ---
         driverJoystick.leftBumper().and(driverJoystick.back().negate()).onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         driverJoystick.back().and(driverJoystick.leftBumper()).onTrue(drivetrain.runOnce(drivetrain::resetPoseToLimelight));
 
@@ -179,6 +178,14 @@ public class RobotContainer {
 
         operatorJoystick.leftTrigger().whileTrue(shooter.run(
             () -> shooter.setIntakeMode(0.6)).finallyDo(shooter::stopAll)
+        );
+
+        operatorJoystick.b().whileTrue(shooter.run(
+            () -> shooter.setEjectMode(1)).finallyDo(shooter::stopAll)
+        );
+
+        driverJoystick.b().whileTrue(shooter.run(
+            () -> shooter.setEjectMode(1)).finallyDo(shooter::stopAll)
         );
 
         operatorJoystick.x().whileTrue(shooter.run(
