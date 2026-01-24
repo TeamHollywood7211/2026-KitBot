@@ -62,11 +62,11 @@ public class ShooterSubsystem extends SubsystemBase {
         frontSensor.getConfigurator().apply(rangeConfigs);
        
         // --- DISTANCE MAP ---
-        rpmMap.put(1.0, 2500.0);
-        rpmMap.put(2.0, 3100.0);
-        rpmMap.put(3.0, 3500.0);
-        rpmMap.put(4.0, 4200.0);
-        rpmMap.put(5.0, 5000.0);
+        rpmMap.put(1.0, 3600.0);
+        rpmMap.put(2.0, 3700.0);
+        rpmMap.put(3.0, 3800.0);
+        rpmMap.put(4.0, 3900.0);
+        rpmMap.put(5.0, 4000.0);
     }
 
     public double getRPMForDistance(double distanceMeters) {
@@ -112,8 +112,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void setEjectMode(double percent) {
-        intakeFlywheelMotor.set(percent);
-        hopperMotor.set(-percent);
+        intakeFlywheelMotor.set(-percent);
+        hopperMotor.set(percent);
     }
 
     public void setLaunchVelocity(double rpm) {

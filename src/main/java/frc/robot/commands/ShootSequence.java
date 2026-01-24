@@ -10,7 +10,7 @@ public class ShootSequence extends SequentialCommandGroup {
     public ShootSequence(GameSwerveDrivetrain drivetrain, ShooterSubsystem shooter) {
         addCommands(
             // 1. Start the flywheel (this finishes instantly)
-            shooter.runOnce(() -> shooter.setLaunchVelocity(3500)),
+            shooter.runOnce(() -> shooter.setLaunchVelocity(3600)),
             
             // 2. Wait for spin-up (0.5s)
             new WaitCommand(0.5), 

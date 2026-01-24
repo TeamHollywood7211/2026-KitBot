@@ -48,7 +48,7 @@ public class RobotContainer {
     // Tuning Variables
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); 
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); 
-    private double TrainingWheels = 0.4; 
+    private double TrainingWheels = 1; 
 
     // --- CONTROLLERS ---
     private final CommandXboxController driverJoystick = new CommandXboxController(0);
@@ -104,12 +104,11 @@ public class RobotContainer {
         
         NamedCommands.registerCommand("Shoot", 
             shooter.run(() -> {
-                shooter.setLaunchVelocity(3500); 
+                shooter.setLaunchVelocity(3600); 
                 shooter.runHopper(-1.0);         
-            })
-            .withTimeout(1.5) 
-            .finallyDo(shooter::stopAll) 
-        );
+            }));
+            
+        
 
         // --- INIT SUBSYSTEMS ---
         drivetrain.configurePathPlanner();
@@ -170,14 +169,14 @@ public class RobotContainer {
         );
 
         operatorJoystick.a().and(operatorJoystick.rightBumper()).whileTrue(
-            shooter.run(() -> shooter.runHopper(-1.0)) 
+            shooter.runOnce(() -> shooter.runHopper(-1.0)) 
         ).onFalse(shooter.runOnce(() -> shooter.runHopper(0.0)));
 
         operatorJoystick.povUp().onTrue(shooter.runOnce(shooter::incrementManualRPM));
         operatorJoystick.povDown().onTrue(shooter.runOnce(shooter::decrementManualRPM));
 
-        operatorJoystick.leftTrigger().whileTrue(shooter.run(
-            () -> shooter.setIntakeMode(0.6)).finallyDo(shooter::stopAll)
+        driverJoystick.rightTrigger().whileTrue(shooter.run(
+            () -> shooter.setIntakeMode(0.8)).finallyDo(shooter::stopAll)
         );
 
         operatorJoystick.b().whileTrue(shooter.run(
