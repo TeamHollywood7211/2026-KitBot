@@ -16,6 +16,9 @@ package frc.robot;
  */
 
 import static edu.wpi.first.units.Units.*;
+
+import java.util.function.BooleanSupplier;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -82,7 +85,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         // 1. Start USB Camera
-        CameraServer.startAutomaticCapture();
+        //CameraServer.startAutomaticCapture();
 
         // 2. Start Remote Layout Server (Port 5800)
         try {
@@ -164,13 +167,28 @@ public class RobotContainer {
         driverJoystick.leftBumper().and(driverJoystick.back().negate()).onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         driverJoystick.back().and(driverJoystick.leftBumper()).onTrue(drivetrain.runOnce(drivetrain::resetPoseToLimelight));
 
-        operatorJoystick.rightTrigger().whileTrue(
-            new ShootCommand(drivetrain, shooter, () -> operatorJoystick.rightBumper().getAsBoolean())
-        );
+        // operatorJoystick.rightTrigger().whileTrue(
+        //     new ShootCommand(drivetrain, shooter, () -> operatorJoystick.rightBumper().getAsBoolean())
+        // );
 
-        operatorJoystick.a().and(operatorJoystick.rightBumper()).whileTrue(
-            shooter.runOnce(() -> shooter.runHopper(-1.0)) 
-        ).onFalse(shooter.runOnce(() -> shooter.runHopper(0.0)));
+        // operatorJoystick.a().and(operatorJoystick.rightBumper()).whileTrue(
+        //     shooter.runOnce(() -> shooter.runHopper(-1.0)) 
+        // ).onFalse(shooter.runOnce(() -> shooter.runHopper(0.0)));
+
+
+        //SHOOT
+        //operatorJoystick.leftTrigger().whileTrue(new ShootCommand(drivetrain, shooter,() -> true));
+        operatorJoystick.rightTrigger().whileTrue( shooter.runOnce( () -> shooter.runIntake(0.68) ) ).onFalse( shooter.runOnce(() ->shooter.runIntake(0.0)));
+
+        //SPOOL
+        operatorJoystick.leftTrigger().whileTrue( shooter.runOnce( () -> shooter.runHopper(-0.4) ) ).onFalse( shooter.runOnce(() ->shooter.runHopper(0.0)));
+
+
+        operatorJoystick.x().whileTrue( shooter.runOnce( () -> shooter.setLow()));
+        operatorJoystick.a().whileTrue( shooter.runOnce( () -> shooter.setMedium()));
+        operatorJoystick.b().whileTrue( shooter.runOnce( () -> shooter.setHigh()));
+        operatorJoystick.y().whileTrue( shooter.runOnce( () -> shooter.setSuperHigh()));
+
 
         operatorJoystick.povUp().onTrue(shooter.runOnce(shooter::incrementManualRPM));
         operatorJoystick.povDown().onTrue(shooter.runOnce(shooter::decrementManualRPM));
