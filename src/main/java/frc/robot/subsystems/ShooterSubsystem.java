@@ -5,6 +5,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 // Add Utils for Simulation Check
@@ -16,15 +17,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Elastic;
 import frc.robot.util.Elastic.NotificationLevel;
+import frc.robot.Constants.ShooterConstants;    
 
 public class ShooterSubsystem extends SubsystemBase {
     // Hardware
-    private final TalonFX intakeFlywheelMotor = new TalonFX(42);
-    private final TalonFX hopperMotor = new TalonFX(43);
+    private final TalonFX flywheelMotor = new TalonFX(ShooterConstants.kFlywheelMotorId);
+    private final TalonFX hopperMotor = new TalonFX(ShooterConstants.kHopperMotorId);
+     private final TalonFX intakeMotor = new TalonFX(ShooterConstants.kIntakeMotorId);
     
     // Sensors
-    private final CANrange hopperSensor = new CANrange(47); 
-    private final CANrange frontSensor = new CANrange(48);  
+    private final CANrange hopperSensor = new CANrange(ShooterConstants.kHopperSensorId); 
+    private final CANrange frontSensor = new CANrange(ShooterConstants.kFrontSensorId);  
     
     // Logic
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
@@ -42,20 +45,34 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public ShooterSubsystem() {
         // --- MOTOR CONFIG ---
-        TalonFXConfiguration intakeConfigs = new TalonFXConfiguration();
+        TalonFXConfiguration flywheelConfigs = new TalonFXConfiguration();
         TalonFXConfiguration hopperConfigs = new TalonFXConfiguration();
+         TalonFXConfiguration intakeConfigs = new TalonFXConfiguration();
 
-        intakeConfigs.Slot0.kV = 0.12; 
-        intakeConfigs.Slot0.kP = 0.11; 
-        intakeConfigs.Slot0.kS = 0.25; 
-        intakeConfigs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        flywheelConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        hopperConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+         intakeConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-        hopperConfigs.Slot0.kV = 0.12; 
-        hopperConfigs.Slot0.kP = 0.11;
+        flywheelConfigs.Slot0.kV = ShooterConstants.kFlywheelkV; 
+        flywheelConfigs.Slot0.kP = ShooterConstants.kFlywheelkP; 
+        flywheelConfigs.Slot0.kS = ShooterConstants.kFlywheelkS; 
+        flywheelConfigs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        flywheelConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+        flywheelConfigs.CurrentLimits.StatorCurrentLimit = ShooterConstants.kFlywheelStatorCurrentLimit;
+        hopperConfigs.Slot0.kV = ShooterConstants.kHopperkV; 
+        hopperConfigs.Slot0.kP = ShooterConstants.kHopperkP;
         hopperConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake; 
-
-        intakeFlywheelMotor.getConfigurator().apply(intakeConfigs);
+        hopperConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+        intakeConfigs.CurrentLimits.StatorCurrentLimit = ShooterConstants.kIntakeStatorCurrentLimit;
+        intakeConfigs.Slot0.kV = ShooterConstants.kIntakekV; 
+        intakeConfigs.Slot0.kP = ShooterConstants.kIntakekP;
+        intakeConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake; 
+        intakeConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+        intakeConfigs.CurrentLimits.StatorCurrentLimit = ShooterConstants.kIntakeStatorCurrentLimit;
+        
+        flywheelMotor.getConfigurator().apply(flywheelConfigs);
         hopperMotor.getConfigurator().apply(hopperConfigs);
+         intakeMotor.getConfigurator().apply(intakeConfigs);
         
         // --- SENSOR CONFIG ---
         CANrangeConfiguration rangeConfigs = new CANrangeConfiguration();
@@ -87,7 +104,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public boolean isAtVelocity() {
-        double actualRPM = intakeFlywheelMotor.getVelocity().getValueAsDouble() * 60.0;
+        double actualRPM = flywheelMotor.getVelocity().getValueAsDouble() * 60.0;
         // In Sim, we might be perfect, so allow a small error
         return Math.abs(actualRPM - targetRPM) < 100;
     }
@@ -99,38 +116,40 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // --- MOTORS ---
     public void stopAll() {
-        intakeFlywheelMotor.stopMotor();
+        flywheelMotor.stopMotor();
+         intakeMotor.stopMotor();
         hopperMotor.stopMotor();
         targetRPM = 0;
     }
 
     public void setIntakeMode(double percent) {
-        intakeFlywheelMotor.set(percent);
+        intakeMotor.set(percent);
         hopperMotor.set(percent);
     }
 
     public void setOuttakeMode(double percent) {
-        intakeFlywheelMotor.set(-percent);
+        intakeMotor.set(-percent);
         hopperMotor.set(-percent);
     }
 
     public void setEjectMode(double percent) {
-        intakeFlywheelMotor.set(-percent);
+        intakeMotor.set(-percent);
         hopperMotor.set(percent);
     }
 
     public void setLaunchVelocity(double rpm) {
         targetRPM = rpm;
         double rps = rpm / 60.0; 
-        intakeFlywheelMotor.setControl(velocityRequest.withVelocity(rps));
+       flywheelMotor.setControl(velocityRequest.withVelocity(rps));
     }
 
     public void runHopper(double speed) {
         hopperMotor.set(speed);
+        intakeMotor.set(-speed);
     }
 
-    public void runIntake(double speed) {
-        intakeFlywheelMotor.set(speed);
+    public void runFlywheel(double speed) {
+        flywheelMotor.set(speed);
     }
 
     public void setLow(){
@@ -156,7 +175,7 @@ public class ShooterSubsystem extends SubsystemBase {
         // --- SIMULATION PHYSICS HACK ---
         if (Utils.isSimulation()) {
             double simulatedRPS = targetRPM / 60.0;
-            intakeFlywheelMotor.getSimState().setRotorVelocity(simulatedRPS);
+            flywheelMotor.getSimState().setRotorVelocity(simulatedRPS);
         }
         
         // --- JAM NOTIFICATION LOGIC ---
@@ -184,7 +203,7 @@ public class ShooterSubsystem extends SubsystemBase {
         wasJammed = currentlyJammed; // Update state for next loop
         // ------------------------------
 
-        double currentRPM = intakeFlywheelMotor.getVelocity().getValueAsDouble() * 60.0;
+        double currentRPM = flywheelMotor.getVelocity().getValueAsDouble() * 60.0;
         
         SmartDashboard.putNumber("Shooter/Target RPM", targetRPM);
         SmartDashboard.putNumber("Shooter/Actual RPM", currentRPM);

@@ -56,6 +56,7 @@ public class RobotContainer {
     // --- CONTROLLERS ---
     private final CommandXboxController driverJoystick = new CommandXboxController(0);
     private final CommandXboxController operatorJoystick = new CommandXboxController(1);
+    private final CommandXboxController paronoidJoystick = new CommandXboxController(2);
 
     private final SlewRateLimiter xLimiter = new SlewRateLimiter(3.0);
     private final SlewRateLimiter yLimiter = new SlewRateLimiter(3.0);
@@ -165,6 +166,7 @@ public class RobotContainer {
         );
         
         driverJoystick.leftBumper().and(driverJoystick.back().negate()).onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        driverJoystick.rightTrigger().whileTrue(shooter.runOnce(()-> shooter.setIntakeMode(1))).onFalse(shooter.runOnce(()->shooter.setIntakeMode(0)));
         driverJoystick.back().and(driverJoystick.leftBumper()).onTrue(drivetrain.runOnce(drivetrain::resetPoseToLimelight));
 
         // operatorJoystick.rightTrigger().whileTrue(
@@ -178,11 +180,15 @@ public class RobotContainer {
 
         //SHOOT
         //operatorJoystick.leftTrigger().whileTrue(new ShootCommand(drivetrain, shooter,() -> true));
-        operatorJoystick.rightTrigger().whileTrue( shooter.runOnce( () -> shooter.runIntake(0.68) ) ).onFalse( shooter.runOnce(() ->shooter.runIntake(0.0)));
+        operatorJoystick.rightTrigger().whileTrue( shooter.runOnce( () -> shooter.runFlywheel(0.5) ) ).onFalse( shooter.runOnce(() ->shooter.runFlywheel(0.0)));
 
         //SPOOL
         operatorJoystick.leftTrigger().whileTrue( shooter.runOnce( () -> shooter.runHopper(-0.4) ) ).onFalse( shooter.runOnce(() ->shooter.runHopper(0.0)));
 
+        //  paronoidJoystick.rightTrigger().whileTrue( shooter.runOnce( () -> shooter.runFlywheel(0.4) ) ).onFalse( shooter.runOnce(() ->shooter.runFlywheel(0.0)));
+
+        //SPOOL
+        // paronoidJoystick.leftTrigger().whileTrue( shooter.runOnce( () -> shooter.runHopper(-0.4) ) ).onFalse( shooter.runOnce(() ->shooter.runHopper(0.0)));
 
         operatorJoystick.x().whileTrue( shooter.runOnce( () -> shooter.setLow()));
         operatorJoystick.a().whileTrue( shooter.runOnce( () -> shooter.setMedium()));
@@ -193,9 +199,9 @@ public class RobotContainer {
         operatorJoystick.povUp().onTrue(shooter.runOnce(shooter::incrementManualRPM));
         operatorJoystick.povDown().onTrue(shooter.runOnce(shooter::decrementManualRPM));
 
-        driverJoystick.rightTrigger().whileTrue(shooter.run(
-            () -> shooter.setIntakeMode(0.8)).finallyDo(shooter::stopAll)
-        );
+        // driverJoystick.rightTrigger().whileTrue(shooter.run(
+        //     () -> shooter.setIntakeMode(0.8)).finallyDo(shooter::stopAll)
+        // );
 
         operatorJoystick.b().whileTrue(shooter.run(
             () -> shooter.setEjectMode(1)).finallyDo(shooter::stopAll)
