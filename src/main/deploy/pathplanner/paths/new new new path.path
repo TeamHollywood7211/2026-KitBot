@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.4679885877318113,
+        "y": 2.2171184022824537
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.5511126961483583,
+        "y": 1.0397004279600581
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.4013409415121245,
+        "y": 5.71055634807418
+      },
+      "prevControl": {
+        "x": 2.8357631954350926,
+        "y": 6.823281027104137
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "epic 2.0"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

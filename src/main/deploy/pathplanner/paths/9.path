@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 6.9502567760342355,
+        "y": 5.2059486447931524
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 9.654436519258203,
+        "y": 4.42962910128388
+      },
+      "isLocked": false,
+      "linkedName": "lala land"
+    },
+    {
+      "anchor": {
+        "x": 6.368017118402282,
+        "y": 2.5405848787446508
+      },
+      "prevControl": {
+        "x": 7.260784593437946,
+        "y": 2.17830242510699
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "wow"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

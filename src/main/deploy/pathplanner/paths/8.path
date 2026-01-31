@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.1796148359486442,
+        "y": 6.034022824536376
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.1796148359486445,
+        "y": 6.034022824536376
+      },
+      "isLocked": false,
+      "linkedName": "ballz"
+    },
+    {
+      "anchor": {
+        "x": 6.9502567760342355,
+        "y": 5.2059486447931524
+      },
+      "prevControl": {
+        "x": 5.9502567760342355,
+        "y": 5.2059486447931524
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "lala land"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}
