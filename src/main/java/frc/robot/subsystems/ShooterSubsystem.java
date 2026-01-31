@@ -33,6 +33,9 @@ public class ShooterSubsystem extends SubsystemBase {
     
     private double targetRPM = 0;
     private double manualRPM = 3500; 
+
+    private double manualSpeed = 0.68;
+
     
     // --- NOTIFICATION STATE ---
     private boolean wasJammed = false;
@@ -125,6 +128,28 @@ public class ShooterSubsystem extends SubsystemBase {
     public void runHopper(double speed) {
         hopperMotor.set(speed);
     }
+
+    public void runIntake(double speed) {
+        intakeFlywheelMotor.set(speed);
+    }
+
+    public void setLow(){
+        manualSpeed=0.4;
+    }
+
+    public void setMedium(){
+        manualSpeed=0.55;
+    }
+
+    public void setHigh(){
+        manualSpeed=0.68;
+    }
+
+    public void setSuperHigh(){
+        manualSpeed=1.0;
+    }
+
+
 
     @Override
     public void periodic() {
