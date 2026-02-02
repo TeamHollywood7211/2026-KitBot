@@ -48,5 +48,10 @@ public class Constants {
 
         public static final NeutralModeValue kClimberRunMode = NeutralModeValue.Brake;
 
+        public static final double kMaxHeightRotations = 80.0;
+        public static final double kMinHeightRotations = 0.0;
+
+        public static final boolean kEnableSoftLimits = true;
+
     }
 }
