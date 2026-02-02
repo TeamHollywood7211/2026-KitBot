@@ -50,8 +50,11 @@ public class Constants {
 
         public static final double kMaxHeightRotations = 80.0;
         public static final double kMinHeightRotations = 0.0;
+        public static final double kClimbTargetHeight = 5.0;
 
         public static final boolean kEnableSoftLimits = true;
+
+        public static final double kManualSpeed = 10.0;
 
     }
 }
