@@ -153,8 +153,10 @@ public class RobotContainer {
                 }));
 
         RobotModeTriggers.disabled().whileTrue(
-                drivetrain.applyRequest(() -> new SwerveRequest.Idle()).ignoringDisable(true));
+                drivetrain.applyRequest(() -> new SwerveRequest.Idle()).ignoringDisable(true)
+        );
 
+        //Driver
         driverJoystick.leftBumper().and(driverJoystick.back().negate())
                 .onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         driverJoystick.rightTrigger().whileTrue(shooter.runOnce(() -> shooter.setIntakeMode(1)))
@@ -163,6 +165,9 @@ public class RobotContainer {
                 .onTrue(drivetrain.runOnce(drivetrain::resetPoseToLimelight));
         driverJoystick.b().whileTrue(shooter.run(
                 () -> shooter.setEjectMode(1)).finallyDo(() -> shooter.stopAll()));
+
+        driverJoystick.povUp().onTrue(climber.runOnce(() -> climber.extendMax()));
+        driverJoystick.povDown().onTrue(climber.runOnce(() -> climber.retractToClimb()));
 
         // OPERATOR
         operatorJoystick.rightTrigger().whileTrue(shooter.runOnce(() -> shooter.runFlywheel(0.5)))
