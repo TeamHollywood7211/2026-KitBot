@@ -6,6 +6,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,7 +41,7 @@ public class ClimberSubsystem extends SubsystemBase {
         leaderConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = ClimberConstants.kEnableSoftLimits;
         leaderConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ClimberConstants.kMinHeightRotations;
         leaderConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = ClimberConstants.kEnableSoftLimits;
-
+        leaderConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         climberLeft.getConfigurator().apply(leaderConfigs);
 
         // 2. Configure FOLLOWER (Right)
@@ -48,7 +49,7 @@ public class ClimberSubsystem extends SubsystemBase {
         followerConfigs.CurrentLimits.StatorCurrentLimit = ClimberConstants.kClimberStatorCurrentLimit;
         followerConfigs.CurrentLimits.StatorCurrentLimitEnable = ClimberConstants.kClimberCurrentLimits;
         followerConfigs.MotorOutput.NeutralMode = ClimberConstants.kClimberRunMode;
-        
+        followerConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         // Redundant Soft Limits
         followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ClimberConstants.kMaxHeightRotations;
         followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = ClimberConstants.kEnableSoftLimits;
@@ -56,7 +57,7 @@ public class ClimberSubsystem extends SubsystemBase {
         followerConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = ClimberConstants.kEnableSoftLimits;
 
         climberRight.getConfigurator().apply(followerConfigs);
-        
+
         zeroSensors();
         climberRight.setControl(followerRequest);
     }
@@ -87,38 +88,42 @@ public class ClimberSubsystem extends SubsystemBase {
     // --- Internal Logic ---
 
     public void moveToPosition(double targetRotations) {
+        climberRight.setControl(followerRequest);
         double safeTarget = Math.max(targetRotations, ClimberConstants.kMinHeightRotations);
         safeTarget = Math.min(safeTarget, ClimberConstants.kMaxHeightRotations);
-        
         climberLeft.setControl(positionRequest.withPosition(safeTarget));
-        climberRight.setControl(followerRequest);
     }
 
     public void runClimber(double rps) {
-        climberLeft.setControl(velocityRequest.withVelocity(rps));
         climberRight.setControl(followerRequest);
-    }
-
-    public void runLeftManual(double rps) {
         climberLeft.setControl(velocityRequest.withVelocity(rps));
-        climberRight.setControl(brakeRequest);
     }
 
-    public void runRightManual(double rps) {
-        climberRight.setControl(velocityRequest.withVelocity(rps));
+    public void runLeftManual(double percent) {
+        climberRight.setControl(brakeRequest);
+        climberLeft.set(percent);
+    }
+
+    public void runRightManual(double percent) {
         climberLeft.setControl(brakeRequest);
+        climberRight.set(percent);
     }
 
     public void stop() {
         climberLeft.setControl(brakeRequest);
-        climberRight.setControl(brakeRequest); 
+        climberRight.setControl(brakeRequest);
     }
-    
-    public double getLeftHeight() { return climberLeft.getPosition().getValueAsDouble(); }
-    public double getRightHeight() { return climberRight.getPosition().getValueAsDouble(); }
+
+    public double getLeftHeight() {
+        return climberLeft.getPosition().getValueAsDouble();
+    }
+
+    public double getRightHeight() {
+        return climberRight.getPosition().getValueAsDouble();
+    }
 
     @Override
     public void periodic() {
-         SmartDashboard.putNumber("Climber Height", getLeftHeight());
+        SmartDashboard.putNumber("Climber Height", getLeftHeight());
     }
 }
