@@ -38,7 +38,7 @@ public class Constants {
         public static final int kClimberRightId = 56;
         public static final int kClimberLeftId = 55;
 
-        public static final double kClimberkP = 0.11;
+        public static final double kClimberkP = 0.25;
         public static final double kClimberkS = 0.25;
         public static final double kClimberkV = 0.12;
 
@@ -48,9 +48,9 @@ public class Constants {
 
         public static final NeutralModeValue kClimberRunMode = NeutralModeValue.Brake;
 
-        public static final double kMaxHeightRotations = 100.0;
-        public static final double kMinHeightRotations = 0.0;
-        public static final double kClimbTargetHeight = 25.0;
+        public static final double kMaxHeightRotations = 120.0;
+        public static final double kMinHeightRotations = -150.0;
+        public static final double kClimbTargetHeight = 20.0;
 
         public static final boolean kEnableSoftLimits = true;
 
