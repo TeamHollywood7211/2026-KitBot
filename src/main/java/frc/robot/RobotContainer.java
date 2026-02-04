@@ -74,8 +74,7 @@ public class RobotContainer {
             TunerConstants.BackRight);
 
     private final ShooterSubsystem shooter = new ShooterSubsystem();
-    
-    // RENAMED: Simplified from 'climberSubsystem' to just 'climber'
+
     private final ClimberSubsystem climber = new ClimberSubsystem();
 
     // Game Phase Manager
@@ -103,12 +102,14 @@ public class RobotContainer {
                 "Dual-Controller Mode Active"));
 
         // --- PATHPLANNER ---
-        NamedCommands.registerCommand("StartIntake", shooter.runOnce(() -> shooter.setIntakeMode(0.6)));
-        NamedCommands.registerCommand("StopShooter", shooter.runOnce(() -> shooter.stopAll()));
-        
-        NamedCommands.registerCommand("ClimberExtend", climber.runOnce(() -> climber.extendMax()));
-        NamedCommands.registerCommand("ClimberRetract", climber.runOnce(() -> climber.retractToClimb()));
-
+        NamedCommands.registerCommand("StartIntake",
+                shooter.runOnce(() -> shooter.setIntakeMode(0.6)));
+        NamedCommands.registerCommand("StopShooter",
+                shooter.runOnce(() -> shooter.stopAll()));
+        NamedCommands.registerCommand("ClimberExtend",
+                climber.runOnce(() -> climber.extendMax()));
+        NamedCommands.registerCommand("ClimberRetract",
+                climber.runOnce(() -> climber.retractToClimb()));
         NamedCommands.registerCommand("Shoot",
                 shooter.run(() -> {
                     shooter.setLaunchVelocity(3600);
@@ -129,7 +130,6 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        // DRIVER (Joystick 0)
         drivetrain.setDefaultCommand(
                 drivetrain.applyRequest(() -> {
                     // 1. Get Alliance Color (Default to Blue if unknown)
@@ -153,10 +153,9 @@ public class RobotContainer {
                 }));
 
         RobotModeTriggers.disabled().whileTrue(
-                drivetrain.applyRequest(() -> new SwerveRequest.Idle()).ignoringDisable(true)
-        );
+                drivetrain.applyRequest(() -> new SwerveRequest.Idle()).ignoringDisable(true));
 
-        //Driver
+        // DRIVER (Joystick 0)
         driverJoystick.leftBumper().and(driverJoystick.back().negate())
                 .onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         driverJoystick.rightTrigger().whileTrue(shooter.runOnce(() -> shooter.setIntakeMode(1)))
@@ -166,10 +165,7 @@ public class RobotContainer {
         driverJoystick.b().whileTrue(shooter.run(
                 () -> shooter.setEjectMode(1)).finallyDo(() -> shooter.stopAll()));
 
-        driverJoystick.povUp().onTrue(climber.runOnce(() -> climber.extendMax()));
-        driverJoystick.povDown().onTrue(climber.runOnce(() -> climber.retractToClimb()));
-
-        // OPERATOR
+        // OPERATOR (Joystick 1)
         operatorJoystick.rightTrigger().whileTrue(shooter.runOnce(() -> shooter.runFlywheel(0.5)))
                 .onFalse(shooter.runOnce(() -> shooter.runFlywheel(0.0)));
 
@@ -194,36 +190,31 @@ public class RobotContainer {
         operatorJoystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.setLimelightLED(true)))
                 .onFalse(drivetrain.runOnce(() -> drivetrain.setLimelightLED(false)));
 
-        
-        
-        // --- CONFIG JOYSTICK (MANUAL CLIMBER) ---
-        double kManualSpeed = 10.0; 
-
+        // Config (Joystick 2)
         // Right Side Manual
         configJoystick.rightTrigger().whileTrue(
-                climber.run(() -> climber.runRightManual(kManualSpeed))
+                climber.run(() -> climber.runRightManual(1.0))
                         .finallyDo((interrupted) -> climber.stop()));
 
         configJoystick.rightBumper().whileTrue(
-                climber.run(() -> climber.runRightManual(-kManualSpeed))
+                climber.run(() -> climber.runRightManual(-1.0))
                         .finallyDo((interrupted) -> climber.stop()));
 
         // Left Side Manual
         configJoystick.leftTrigger().whileTrue(
-                climber.run(() -> climber.runLeftManual(kManualSpeed))
+                climber.run(() -> climber.runLeftManual(1.0))
                         .finallyDo((interrupted) -> climber.stop()));
-                        
+
         configJoystick.leftBumper().whileTrue(
-                climber.run(() -> climber.runLeftManual(-kManualSpeed))
+                climber.run(() -> climber.runLeftManual(-1.0))
                         .finallyDo((interrupted) -> climber.stop()));
-                        
+
         // Zero Sensors
         configJoystick.x().onTrue(
-            climber.runOnce(() -> {
-                climber.zeroSensors();
-                System.out.println("Climber Sensors Zeroed!");
-            })
-        );
+                climber.runOnce(() -> {
+                    climber.zeroSensors();
+                    System.out.println("Climber Sensors Zeroed!");
+                }));
     }
 
     public Command getAutonomousCommand() {
