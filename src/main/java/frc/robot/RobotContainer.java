@@ -164,7 +164,9 @@ public class RobotContainer {
                 .onTrue(drivetrain.runOnce(drivetrain::resetPoseToLimelight));
         driverJoystick.b().whileTrue(shooter.run(
                 () -> shooter.setEjectMode(1)).finallyDo(() -> shooter.stopAll()));
-
+        driverJoystick.povUp().onTrue(climber.runOnce(() ->climber.extendMax()));
+        driverJoystick.povDown().onTrue(climber.runOnce(() ->climber.retractToClimb()));
+        
         // OPERATOR (Joystick 1)
         operatorJoystick.rightTrigger().whileTrue(shooter.runOnce(() -> shooter.runFlywheel(0.5)))
                 .onFalse(shooter.runOnce(() -> shooter.runFlywheel(0.0)));

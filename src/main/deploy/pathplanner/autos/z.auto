@@ -3,7 +3,20 @@
   "command": {
     "type": "sequential",
     "data": {
-      "commands": []
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "center blue"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "bump blue"
+          }
+        }
+      ]
     }
   },
   "resetOdom": true,

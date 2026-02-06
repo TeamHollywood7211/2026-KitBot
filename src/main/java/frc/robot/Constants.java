@@ -46,7 +46,7 @@ public class Constants {
         // Follower
         // We use (Aligned) here because we are setting the Inversion
         // in the Hardware Config below. 'Positive' will mean 'Up' for both motors.
-        public static final MotorAlignmentValue kFollowerAlignment = MotorAlignmentValue.Aligned;
+        public static final MotorAlignmentValue kFollowerAlignment = MotorAlignmentValue.Opposed;
 
         // TUNING (Stiffer hold)
         public static final double kClimberkP = 1.0;
