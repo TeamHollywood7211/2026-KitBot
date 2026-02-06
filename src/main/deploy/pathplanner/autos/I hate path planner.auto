@@ -45,30 +45,6 @@
           "data": {
             "waitTime": 1.0
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "7"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "8"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "9"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "10"
-          }
         }
       ]
     }
