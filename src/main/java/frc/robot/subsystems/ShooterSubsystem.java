@@ -117,7 +117,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // --- MOTORS ---
     public void stopAll() {
         flywheelMotor.stopMotor();
-         intakeMotor.stopMotor();
+        intakeMotor.stopMotor();
         hopperMotor.stopMotor();
         targetRPM = 0;
     }

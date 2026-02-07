@@ -111,9 +111,12 @@ public class RobotContainer {
         NamedCommands.registerCommand("ClimberRetract",
                 climber.runOnce(() -> climber.retractToClimb()));
         NamedCommands.registerCommand("Shoot",
-                shooter.run(() -> {
-                    shooter.setLaunchVelocity(3600);
+                shooter.runOnce(() -> {
                     shooter.runHopper(-1.0);
+                }));
+        NamedCommands.registerCommand("SpinUp",
+                shooter.runOnce(() -> {
+                    shooter.setLaunchVelocity(3000);
                 }));
 
         // --- INIT SUBSYSTEMS ---
@@ -164,8 +167,8 @@ public class RobotContainer {
                 .onTrue(drivetrain.runOnce(drivetrain::resetPoseToLimelight));
         driverJoystick.b().whileTrue(shooter.run(
                 () -> shooter.setEjectMode(1)).finallyDo(() -> shooter.stopAll()));
-        driverJoystick.povUp().onTrue(climber.runOnce(() ->climber.extendMax()));
-        driverJoystick.povDown().onTrue(climber.runOnce(() ->climber.retractToClimb()));
+        driverJoystick.y().onTrue(climber.runOnce(() ->climber.extendMax()));
+        driverJoystick.a().onTrue(climber.runOnce(() ->climber.retractToClimb()));
         
         // OPERATOR (Joystick 1)
         operatorJoystick.rightTrigger().whileTrue(shooter.runOnce(() -> shooter.runFlywheel(0.5)))

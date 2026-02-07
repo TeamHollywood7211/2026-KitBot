@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.915164051355206,
-        "y": 2.4758915834522113
+        "x": 3.5473894436519258,
+        "y": 2.0877318116975756
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.915164051355206,
-        "y": 2.4758915834522117
+        "x": 2.939272467902995,
+        "y": 2.165363766048504
       },
       "isLocked": false,
-      "linkedName": "straight over hump"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.412325249643366,
-        "y": 3.82151212553495
+        "x": 2.8357631954350926,
+        "y": 2.5535235378031382
       },
       "prevControl": {
-        "x": 8.502895863052782,
-        "y": 3.2522111269614835
+        "x": 3.327432239657631,
+        "y": 2.1136091298145496
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "over to balls"
+      "linkedName": "Shot"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 45.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,7 +47,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 42.95459151111281
   },
   "reversed": false,
   "folder": null,

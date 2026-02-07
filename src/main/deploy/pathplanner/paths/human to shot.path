@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.9651497860199716,
-        "y": 4.157917261055635
+        "x": 0.49386590585481693,
+        "y": 0.6515406562022019
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.4346647646219686,
-        "y": 6.538630527817404
+        "x": 1.2960627674750356,
+        "y": 1.2208416547788885
       },
       "isLocked": false,
-      "linkedName": "ending epic"
+      "linkedName": "Human"
     },
     {
       "anchor": {
-        "x": 5.7340228245363765,
-        "y": 5.490599144079885
+        "x": 2.8357631954350926,
+        "y": 2.5535235378031382
       },
       "prevControl": {
-        "x": 5.643452211126961,
-        "y": 5.814065620542083
+        "x": 1.917118402282454,
+        "y": 1.9324679029957212
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "over hump epic"
+      "linkedName": "Shot"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 42.95459151111281
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 178.29018595565773
   },
   "useDefaultConstraints": true
 }

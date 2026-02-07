@@ -5,9 +5,21 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "SpinUp"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "backup"
+            "pathName": "right to shot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {
@@ -19,7 +31,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 5.0
           }
         },
         {
@@ -31,25 +43,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start 2 Human"
+            "pathName": "Shot to human"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 5.0
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "StopShooter"
+            "name": "SpinUp"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Human to Shoot"
+            "pathName": "human to shot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {
@@ -61,7 +79,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 7.0
           }
         },
         {
