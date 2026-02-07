@@ -21,6 +21,7 @@ public class GamePhaseSubsystem extends SubsystemBase {
     private boolean allianceShiftAlertSent = false;
     private String currentPhase = "DISABLED";
     private boolean isHubActive = false; 
+    private Double switchTime = 0.0;
 
     // --- SIMULATION CONTROLS ---
     private final SendableChooser<String> simAutoWinner = new SendableChooser<>();
@@ -31,6 +32,7 @@ public class GamePhaseSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Match/Time", 0);
         SmartDashboard.putBoolean("Match/HubActive", false);
         SmartDashboard.putNumber("Robot/Voltage", 0.0); 
+        SmartDashboard.putNumber("Match/TimeToSwitch", 0.0); 
         
         // RENAMED: Initialize with waiting text
         SmartDashboard.putString("Match/Who won Auto?", "WAITING FOR FMS...");
@@ -101,7 +103,8 @@ public class GamePhaseSubsystem extends SubsystemBase {
 
         SmartDashboard.putString("Match/Phase", currentPhase);
         SmartDashboard.putNumber("Match/Time", Math.max(0, matchTime));
-        SmartDashboard.putBoolean("Match/HubActive", isHubActive); 
+        SmartDashboard.putBoolean("Match/HubActive", isHubActive);
+        SmartDashboard.putNumber("Match/TimeToSwitch",switchTime); 
     }
 
     private void checkHubStatus(double time, boolean isAuto, boolean isTeleop) {
@@ -134,10 +137,10 @@ public class GamePhaseSubsystem extends SubsystemBase {
         boolean amIRed = (myAlliance.get() == Alliance.Red);
         boolean myAllianceWonAuto = (didRedWinAuto == amIRed);
 
-        if (time <= 130 && time > 105) isHubActive = !myAllianceWonAuto;
-        else if (time <= 105 && time > 80) isHubActive = myAllianceWonAuto;
-        else if (time <= 80 && time > 55) isHubActive = !myAllianceWonAuto;
-        else if (time <= 55 && time > 30) isHubActive = myAllianceWonAuto;
+        if      (time <= 130 && time > 105)  { isHubActive = !myAllianceWonAuto; switchTime = time - 105.0; }
+        else if (time <= 105 && time >  80)  { isHubActive = myAllianceWonAuto;  switchTime = time - 80.0;  }
+        else if (time <= 80  && time >  55)  { isHubActive = !myAllianceWonAuto; switchTime = time - 55.0;  }
+        else if (time <= 55  && time >  30)  { isHubActive = myAllianceWonAuto;  switchTime = time - 30.0;  }
     }
 
     private void resetFlags() {
